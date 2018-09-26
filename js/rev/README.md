@@ -91,21 +91,19 @@ Install `polymer-cli`
 npm install -g polymer-cli
 ```
 
-## Develop
+# Development and Modification
 
-```bash
-mkdir -p /var/www/html/rev/viewer
-```
+## Directory of files
 
 Make sure `<base href="/">` is set in `index.html`.
-It is use by the app as the base path to fetch files. If base is '/rev/viewer', the application
-tries to get its content from `<hostname>:<port>/rev/viewer/`.
+It is use by the app as the base path to fetch files. If base is '/path/test', the application
+tries to get its content from `<hostname>:<port>/path/test/`.
 
 At development time, the application is served from `localhost:8081/` hence `<base href='/'>`.
 
-At production time, the application is served from `<hostname>:<port>/rev/viewer/` hence `<base href='/rev/viewer/'>`
-
 You may also want to update `demoPrefix` in `rev-app.html` depending on where the data is located.
+
+Then to launch the web server :
 
 ``` bash
 
@@ -133,7 +131,14 @@ polymer serve --port 8060 --hostname 0.0.0.0 build/es5-bundled
 
 ```
 
-## Deploy
+# Deploy
+
+```bash
+mkdir -p /var/www/html/rev/viewer
+```
+
+Now, make sure `<base href="/rev/viewer/">` is set in `index.html`.
+At production time, the application is served from `<hostname>:<port>/rev/viewer/` hence `<base href='/rev/viewer/'>`
 
 Once build copy content from `build/es5` to where we want to serve the app from. Typically it is `fnndsc.childrens.harvard.edu:/var/www/html/rev/viewer`.
 
@@ -166,21 +171,24 @@ For instance, if the normative data is located at `fnndsc.childrens.harvard.edu:
 ## Add new data
 
 ### Tree structure
-`year > month > patient > series`
+`year > month > patient / examples > series`
 
 ### Generate JSON description for the patient
 
-Currently the script only generate a JSON description per series.
+To fetch data, a script generate a JSON file that discribe the series. This file is call `demo.json`
 
-We must create a new JSON, that contains all descriptions merged into 1 array manually.
+The script is located in : `js/rev/scripts/dcmpreview.py`
 
-Script to run: `script/dcmpreview.py`
+It requires pypx, pydicom, dcmtk, imagemagick
 
-Requires pypx, pydicom, dcmtk, imagemagick
-
-Run it (from the patient directory for that to be accurate):
+Either you run it for one serie :
 ```
-$ patient > dcmpreview.py ...
+ python3 dcmpreview.py -d year/month/example/series/
+```
+
+or for one study :
+```
+ python3 dcmpreview.py -d year/month/example/ --study
 ```
 
 ### Add it in the lookup list
